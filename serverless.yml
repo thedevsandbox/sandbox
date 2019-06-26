@@ -1,0 +1,11 @@
+service: lambda-example 
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ca-central-1'}  
+
+functions:
+  reverse_string:
+    handler: handler.reverse_string
