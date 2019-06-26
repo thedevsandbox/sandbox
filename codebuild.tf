@@ -1,3 +1,10 @@
+data "aws_caller_identity" "current" {}
+
+resource "aws_s3_bucket" "codepipeline-sandbox" {
+  bucket = "codepipeline-sandbox-artifacts-${data.aws_caller_identity.current.account_id}"
+  acl    = "private"
+}
+
 resource "aws_iam_role" "codebuild-sandbox" {
   name = "codebuild-example-role"
 
@@ -38,14 +45,11 @@ resource "aws_iam_role_policy" "codebuild-sandbox" {
         {
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:s3:::codepipeline-ca-central-1-*"
+              "${aws_s3_bucket.codepipeline-sandbox.arn}",
+              "${aws_s3_bucket.codepipeline-sandbox.arn}/*"
             ],
             "Action": [
-                "s3:PutObject",
-                "s3:GetObject",
-                "s3:GetObjectVersion",
-                "s3:GetBucketAcl",
-                "s3:GetBucketLocation"
+                "s3:*"
             ]
         }
     ]
@@ -60,7 +64,9 @@ resource "aws_codebuild_project" "sandbox-master-build" {
   service_role  = "${aws_iam_role.codebuild-sandbox.arn}"
 
   artifacts {
-    type = "NO_ARTIFACTS"
+    type = "S3"
+    location = "${aws_s3_bucket.codepipeline-sandbox.bucket}"
+    packaging = "ZIP"
   }
   
   environment {
@@ -116,6 +122,7 @@ resource "aws_codebuild_project" "sandbox-pr-build" {
   source {
     type            = "GITHUB"
     location        = "https://github.com/thedevsandbox/sandbox.git"
+    buildspec       = "testspec.yml"
     auth {
       type = "OAUTH"
     }
