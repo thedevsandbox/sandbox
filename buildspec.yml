@@ -13,4 +13,14 @@ phases:
       - python -m unittest discover .
   build:
     commands:
-      - serverless deploy --stage cicd | tee deploy.out
+      - mkdir artifacts
+      - mkdir artifacts/dev
+      - serverless package --package artifacts/dev --stage dev -v      
+      
+artifacts:
+ files:
+   - artifacts/**/*
+   - serverless.yml
+   - deploy.sh
+   - package.json
+   - package-lock.json      
