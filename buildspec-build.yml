@@ -24,6 +24,7 @@ artifacts:
  files:
    - artifacts/**/*
    - serverless.yml
+   - buildspec-deploy.yml
    - deploy.sh
    - package.json
    - package-lock.json
