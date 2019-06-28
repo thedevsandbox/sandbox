@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.7
+    commands:
+      #- rm package-lock.json
+      - npm install --silent --progress=false -g npm
+      
+      ## Dependencies
+      - npm install --silent --progress-false
+      - npm --version
+      - npm install --silent --progress=false -g serverless
+      - npm install --silent --save–dev serverless-stack-output      
+  post_build:
+    commands:
+      #- bash deploy.sh
+      - serverless deploy --stage ${env} --package ${CODEBUILD_SRC_DIR}/artifacts/${env} -v
