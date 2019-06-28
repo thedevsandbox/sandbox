@@ -2,6 +2,8 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      python: 3.7
     commands:
       #- rm package-lock.json
       - npm install --silent --progress=false -g npm
@@ -15,8 +17,8 @@ phases:
   build:
     commands:
       - mkdir artifacts
-      - mkdir artifacts/dev
-      - serverless package --package artifacts/dev --stage dev -v
+      - mkdir artifacts/${env}
+      - serverless package --package artifacts/${env} --stage ${env} -v
 
 artifacts:
  files:
